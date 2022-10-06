@@ -16,23 +16,28 @@ export class App extends Component {
     gallery: [],
     loader: false,
     error: false,
-    page: 2,
+    page: 1,
   };
 
   async componentDidMount() {
     console.log('componentDidMount');
   }
 
-  async componentDidUpdate(nextProps, nextState) {
+  async componentDidUpdate(prevProps, prevState) {
     console.log('componentDidUpdate');
-    console.log('nextProps', nextProps);
-    console.log('nextState', nextState);
+    console.log(prevState);
+    console.log(this.state);
+    if (this.state.page !== prevState.page) {
+      console.log('prevState.page', prevState.page);
+      console.log('this.state.page', this.state.page);
+    }
   }
 
   getGallery = async ({ query }) => {
     const { page } = this.state;
     try {
       this.setState({ loader: true });
+      this.setState({ page: 1 });
       const wall = await fetchGallery(query, page);
       this.setState(state => ({
         gallery: [...state.gallery, ...wall],
@@ -42,6 +47,7 @@ export class App extends Component {
       console.log(error);
     } finally {
       this.setState({ loader: false });
+      this.setState(state => ({ page: state.page + 1 }));
     }
   };
 
