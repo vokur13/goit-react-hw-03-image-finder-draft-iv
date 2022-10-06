@@ -8,30 +8,62 @@ import { Searchbar } from 'components/Searchbar';
 import { fetchGallery } from '../services/ImageGalleryAPI';
 import { Loader } from 'components/Loader';
 import { ImageGallery } from 'components/ImageGallery';
+import { ImageGalleryError } from 'components/ImageGalleryError';
+
+const Status = {
+  IDLE: 'idle',
+  PENDING: 'pending',
+  RESOLVED: 'resolved',
+  REJECTED: 'rejected',
+};
 
 export class App extends Component {
   state = {
     gallery: [],
-    loader: false,
+    //     loader: false,
     error: false,
     page: null,
     query: '',
+    status: Status.IDLE,
   };
 
   async componentDidUpdate(prevProps, prevState) {
     const { query, page } = this.state;
     if (prevState.query !== query) {
-      this.setState({ loader: true });
-      this.setState({ page: 1 });
+      this.setState({
+        status: Status.PENDING,
+        loader: true,
+        page: 1,
+        gallery: [],
+      });
       try {
         const wall = await fetchGallery(query, page);
-        this.setState(state => ({ gallery: [...state.gallery, ...wall] }));
+        this.setState(state => ({
+          status: Status.RESOLVED,
+          gallery: [...state.gallery, ...wall],
+        }));
       } catch (error) {
-        this.setState({ error: true });
+        this.setState({ error: true, status: Status.REJECTED });
         console.log(error);
       } finally {
-        this.setState({ loader: false });
-        this.setState(state => ({ page: state.page + 1 }));
+        // this.setState({ loader: false });
+        // this.setState(state => ({ page: state.page + 1 }));
+      }
+    } else if (prevState.page !== page) {
+      console.log('Page number increase');
+      this.setState({
+        status: Status.PENDING,
+        loader: true,
+      });
+      try {
+        const wall = await fetchGallery(query, page);
+        this.setState(state => ({
+          status: Status.RESOLVED,
+          gallery: [...state.gallery, ...wall],
+        }));
+      } catch (error) {
+        this.setState({ error: true, status: Status.REJECTED });
+        console.log(error);
       }
     }
   }
@@ -40,32 +72,74 @@ export class App extends Component {
     this.setState({ query });
   };
 
-  addMoreGallery = () => {};
+  addImagesOnWall = async () => {
+    this.setState(state => ({ page: state.page + 1 }));
+  };
 
   render() {
-    const { gallery, loader, error } = this.state;
-    return (
-      <>
-        {loader && <Loader />}
-        <ToastContainer autoClose={3000} />
-        <Searchbar onSubmit={this.handleFormSubmit} />
-        <ImageGallery data={gallery} />
-        {error && (
-          <p>Sorry, something goes wrong, reload page and try again please</p>
-        )}
-        {gallery.length > 0 ? <ImageGallery data={gallery} /> : null}
-        {gallery.length > 0 && (
-          <button
-            type="button"
-            onClick={() => {
-              console.log('addGallery');
-              this.addGallery();
-            }}
-          >
+    const { gallery, status, error } = this.state;
+
+    if (status === 'idle') {
+      return (
+        <>
+          <Searchbar onSubmit={this.handleFormSubmit} />
+          <p>Please let us know your query item</p>
+        </>
+      );
+    }
+
+    if (status === 'pending') {
+      return (
+        <>
+          <Searchbar onSubmit={this.handleFormSubmit} />
+          <Loader />
+        </>
+      );
+    }
+
+    if (status === 'rejected') {
+      return (
+        <>
+          <ToastContainer autoClose={3000} />
+          <ImageGalleryError message={error.message} />
+          <p>Ooops, something goes wrong, please try again</p>
+        </>
+      );
+    }
+
+    if (status === 'resolved') {
+      return (
+        <>
+          <Searchbar onSubmit={this.handleFormSubmit} />
+          <ImageGallery data={gallery} />
+          <button type="button" onClick={this.addImagesOnWall}>
             Load more
           </button>
-        )}
-      </>
-    );
+        </>
+      );
+    }
+
+    //     return (
+    //       <>
+    //         {/* {loader && <Loader />} */}
+    //         {/* <ToastContainer autoClose={3000} /> */}
+    //         {/* <Searchbar onSubmit={this.handleFormSubmit} /> */}
+    //         {/* <ImageGallery data={gallery} /> */}
+    //         {/* {!query && <p>Please let us know your query item</p>} */}
+    //         {/* {error && <p>Ooops, something goes wrong, please try again</p>} */}
+    //         {/* {gallery.length > 0 ? <ImageGallery data={gallery} /> : null} */}
+    //         {/* {gallery.length > 0 && (
+    //           <button
+    //             type="button"
+    //             onClick={() => {
+    //               console.log('addGallery');
+    //               this.addGallery();
+    //             }}
+    //           >
+    //             Load more
+    //           </button>
+    //         )} */}
+    //       </>
+    //     );
   }
 }
