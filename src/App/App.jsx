@@ -20,7 +20,6 @@ const Status = {
 export class App extends Component {
   state = {
     gallery: [],
-    //     loader: false,
     error: false,
     page: null,
     query: '',
@@ -28,7 +27,7 @@ export class App extends Component {
   };
 
   async componentDidUpdate(prevProps, prevState) {
-    const { query, page } = this.state;
+    const { query, page, gallery } = this.state;
     if (prevState.query !== query) {
       this.setState({
         status: Status.PENDING,
@@ -45,11 +44,12 @@ export class App extends Component {
       } catch (error) {
         this.setState({ error: true, status: Status.REJECTED });
         console.log(error);
-      } finally {
-        // this.setState({ loader: false });
-        // this.setState(state => ({ page: state.page + 1 }));
       }
-    } else if (prevState.page !== page) {
+    }
+    //     if (gallery === prevState.gallery) {
+    //       return toast.error(`No images upon query ${query} found`);
+    //     }
+    if (prevState.page !== page) {
       this.setState({
         status: Status.PENDING,
         loader: true,
@@ -65,6 +65,9 @@ export class App extends Component {
         this.setState({ error: true, status: Status.REJECTED });
         console.log(error);
       }
+    }
+    if (prevState.gallery === gallery) {
+      //       this.setState({ status: Status.PENDING });
     }
   }
 
@@ -110,7 +113,6 @@ export class App extends Component {
         <>
           <ToastContainer autoClose={3000} />
           <ImageGalleryError message={error.message} />
-          <p>Ooops, something goes wrong, please try again</p>
         </>
       );
     }
@@ -128,28 +130,5 @@ export class App extends Component {
         </>
       );
     }
-
-    //     return (
-    //       <>
-    //         {/* {loader && <Loader />} */}
-    //         {/* <ToastContainer autoClose={3000} /> */}
-    //         {/* <Searchbar onSubmit={this.handleFormSubmit} /> */}
-    //         {/* <ImageGallery data={gallery} /> */}
-    //         {/* {!query && <p>Please let us know your query item</p>} */}
-    //         {/* {error && <p>Ooops, something goes wrong, please try again</p>} */}
-    //         {/* {gallery.length > 0 ? <ImageGallery data={gallery} /> : null} */}
-    //         {/* {gallery.length > 0 && (
-    //           <button
-    //             type="button"
-    //             onClick={() => {
-    //               console.log('addGallery');
-    //               this.addGallery();
-    //             }}
-    //           >
-    //             Load more
-    //           </button>
-    //         )} */}
-    //       </>
-    //     );
   }
 }
