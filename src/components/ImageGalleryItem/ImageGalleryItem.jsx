@@ -1,5 +1,9 @@
-import { Modal } from 'components/Modal';
 import { Component } from 'react';
+import { Modal } from 'components/Modal';
+import {
+  ImageGalleryListItem,
+  ImageGalleryItemImage,
+} from './ImageGalleryItem.styled';
 
 export class ImageGalleryItem extends Component {
   state = { isModalOpen: false };
@@ -15,9 +19,8 @@ export class ImageGalleryItem extends Component {
     const { isModalOpen } = this.state;
     const { item } = this.props;
     return (
-      <li className="ImageGalleryItem">
-        <img
-          className="ImageGalleryItem-image"
+      <ImageGalleryListItem>
+        <ImageGalleryItemImage
           src={item.webformatURL}
           alt={item.tags}
           onClick={this.openModal}
@@ -29,7 +32,7 @@ export class ImageGalleryItem extends Component {
             onClose={this.closeModal}
           />
         )}
-      </li>
+      </ImageGalleryListItem>
     );
   }
 }

@@ -2,8 +2,8 @@ import React, { Component } from 'react';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import 'css/styles.css';
-// import { Box } from 'components/Box';
-// import { Button } from 'components/Button';
+import { Box } from 'components/Box';
+import { Button } from 'components/Button';
 import { Searchbar } from 'components/Searchbar';
 import { fetchGallery } from '../services/ImageGalleryAPI';
 import { Loader } from 'components/Loader';
@@ -38,9 +38,9 @@ export class App extends Component {
       });
       try {
         const wall = await fetchGallery(query, page);
-        this.setState(state => ({
+        this.setState(() => ({
           status: Status.RESOLVED,
-          gallery: [...state.gallery, ...wall],
+          gallery: [...wall],
         }));
       } catch (error) {
         this.setState({ error: true, status: Status.REJECTED });
@@ -50,16 +50,16 @@ export class App extends Component {
         // this.setState(state => ({ page: state.page + 1 }));
       }
     } else if (prevState.page !== page) {
-      console.log('Page number increase');
       this.setState({
         status: Status.PENDING,
         loader: true,
       });
+
       try {
         const wall = await fetchGallery(query, page);
-        this.setState(state => ({
+        this.setState(prevState => ({
           status: Status.RESOLVED,
-          gallery: [...state.gallery, ...wall],
+          gallery: [...prevState.gallery, ...wall],
         }));
       } catch (error) {
         this.setState({ error: true, status: Status.REJECTED });
@@ -72,8 +72,11 @@ export class App extends Component {
     this.setState({ query });
   };
 
-  addImagesOnWall = async () => {
-    this.setState(state => ({ page: state.page + 1 }));
+  //   handleMoreImage = async () => {
+  //     this.setState(state => ({ page: state.page + 1 }));
+  //   };
+  handleMoreImage = async () => {
+    this.setState(prevState => ({ page: prevState.page + 1 }));
   };
 
   render() {
@@ -92,7 +95,9 @@ export class App extends Component {
       return (
         <>
           <Searchbar onSubmit={this.handleFormSubmit} />
-          <Loader />
+          <Box display="flex" justifyContent="center">
+            <Loader />
+          </Box>
         </>
       );
     }
@@ -112,9 +117,11 @@ export class App extends Component {
         <>
           <Searchbar onSubmit={this.handleFormSubmit} />
           <ImageGallery data={gallery} />
-          <button type="button" onClick={this.addImagesOnWall}>
-            Load more
-          </button>
+          <Box display="flex" justifyContent="center">
+            <Button type="button" onClick={this.handleMoreImage}>
+              Load more
+            </Button>
+          </Box>
         </>
       );
     }

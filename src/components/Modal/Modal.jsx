@@ -1,11 +1,6 @@
 import { Component } from 'react';
 import { createPortal } from 'react-dom';
-import './Modal.css';
-
-// - Модальное окно (componentDidMount и componentWillUnmount)
-//   - Проблема z-index, как решать без костылей (порталы)
-//   - Слушатель на keydown для Escape
-//   - Слушатель на клик по Backdrop
+import { Overlay, ModalWindow } from './Modal.styled';
 
 const modalRoot = document.querySelector('#modal-root');
 
@@ -32,21 +27,13 @@ export class Modal extends Component {
   render() {
     const { largeImageURL, tags } = this.props;
     return createPortal(
-      <div className="Overlay" onClick={this.handleBackDropClic}>
-        <div className="Modal">
+      <Overlay onClick={this.handleBackDropClic}>
+        <ModalWindow>
           {this.props.children}
           <img src={largeImageURL} alt={tags} />
-        </div>
-      </div>,
+        </ModalWindow>
+      </Overlay>,
       modalRoot
     );
   }
-}
-
-{
-  /* <div class="overlay">
-  <div class="modal">
-    <img src="" alt="" />
-  </div>
-</div>; */
 }
