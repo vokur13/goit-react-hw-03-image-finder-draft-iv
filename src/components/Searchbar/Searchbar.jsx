@@ -1,13 +1,7 @@
 import PropTypes from 'prop-types';
 import { Formik } from 'formik';
 import { Box } from 'components/Box';
-import {
-  SearchForm,
-  Input,
-  SearchFormButton,
-  SearchFormButtonLabel,
-  Error,
-} from './Searchbar.styled';
+import { SearchForm, Input, SearchFormButton, Error } from './Searchbar.styled';
 import * as yup from 'yup';
 import { ImSearch } from 'react-icons/im';
 
@@ -46,10 +40,7 @@ export const Searchbar = ({ onSubmit }) => {
         {({ isSubmitting }) => (
           <SearchForm>
             <SearchFormButton type="submit" disabled={isSubmitting}>
-              <SearchFormButtonLabel>
-                <ImSearch style={{ marginRight: 8 }} />
-                Search
-              </SearchFormButtonLabel>
+              <ImSearch style={{ marginRight: 0 }} />
             </SearchFormButton>
 
             <Input

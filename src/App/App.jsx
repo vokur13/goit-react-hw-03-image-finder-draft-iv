@@ -72,9 +72,6 @@ export class App extends Component {
     this.setState({ query });
   };
 
-  //   handleMoreImage = async () => {
-  //     this.setState(state => ({ page: state.page + 1 }));
-  //   };
   handleMoreImage = async () => {
     this.setState(prevState => ({ page: prevState.page + 1 }));
   };
@@ -95,7 +92,13 @@ export class App extends Component {
       return (
         <>
           <Searchbar onSubmit={this.handleFormSubmit} />
-          <Box display="flex" justifyContent="center">
+          <Box
+            p={0}
+            position="absolute"
+            top="50%"
+            left="50%"
+            transform="translate(-50%, -50%)"
+          >
             <Loader />
           </Box>
         </>
