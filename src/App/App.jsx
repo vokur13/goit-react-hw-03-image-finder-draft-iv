@@ -66,9 +66,6 @@ export class App extends Component {
         console.log(error);
       }
     }
-    if (prevState.gallery === gallery) {
-      //       this.setState({ status: Status.PENDING });
-    }
   }
 
   handleFormSubmit = async ({ query }) => {

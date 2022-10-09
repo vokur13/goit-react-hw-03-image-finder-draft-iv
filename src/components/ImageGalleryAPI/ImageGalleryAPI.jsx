@@ -1,7 +1,7 @@
 import { Component } from 'react';
 import { toast } from 'react-toastify';
-// import { FetchGallery } from '../../services/ImageGalleryAPI';
-// import { ImageGallery } from 'components/ImageGallery';
+import { FetchGallery } from '../../services/ImageGalleryAPI';
+import { ImageGallery } from 'components/ImageGallery';
 import { Loader } from 'components/Loader';
 
 export class ImageGalleryAPI extends Component {
